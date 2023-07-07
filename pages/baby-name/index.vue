@@ -1,22 +1,5 @@
 <script setup lang="ts">
-
-enum Gender {
-    GIRL= 'Girl',
-    BOY= 'Boy',
-    UNISEX= 'Unisex'
-}
-
-enum Popularity {
-    UNIQUE= 'Unique',
-    TRENDY= 'Trendy',
-}
-
-enum Length {
-    LONG= 'Long',
-    ALL= 'All',
-    SHORT= 'Short'
-}
-
+import { Gender, Popularity, Length, names } from '@/data/names'
 interface OptionState {
     gender: Gender;
     popularity:Popularity ;
@@ -27,52 +10,72 @@ const options= reactive<OptionState>({
     popularity: Popularity.TRENDY,
     length: Length.SHORT
 })
+
+const computeSelectedNames= () => {
+    const filteredNames= names.filter((name)=> name.gender === options.gender)
+    .filter((name)=> name.popularity=== options.popularity)
+    .filter((name)=> {
+        if(options.length === Length.ALL)  return true
+        else return name.length === options.length
+    })
+    selectedNames.value= filteredNames.map((name)=> name.name)
+}
+
+const selectedNames= ref<string[]>([]);
+
+const optionArray = [
+    {
+        title: "Choose a Gender",
+        category: "gender",
+        buttons : [
+            Gender.BOY,
+            Gender.GIRL,
+            Gender.UNISEX
+        ]
+    },
+    {
+        title: "Choose name's popularity",
+        category: "popularity",
+        buttons : [
+            Popularity.UNIQUE,
+            Popularity.TRENDY, 
+        ]
+    },
+    {
+        title: "Choose name's length",
+        category: "length",
+        buttons : [
+            Length.LONG,
+            Length.ALL,
+            Length.SHORT 
+        ]
+    }
+]
+
+const removeName= (index: number) => {
+    const filteredNames= [...selectedNames.value];
+    filteredNames.splice(index, 1);
+    selectedNames.value= filteredNames
+}
 </script>
 
 <template>
     <div class="container">
         <h1 class="text-center">Baby name generator</h1>
         <h5 class="text-center">Choose your Options and click the "Fine Names" Button</h5>
-        <div class="options-container">
-            
-            <div class="gender-option"> 
-                <h4>Choose a Gender</h4>               
-                <span class="btn"
-                :class="options.gender === Gender.BOY && 'option-active'"
-                >Boys</span>
-                <span class="btn"
-                :class="options.gender === Gender.UNISEX && 'option-active'"
-                >Unisex</span>
-                <span class="btn"
-                :class="options.gender === Gender.GIRL && 'option-active'"
-                >Girls</span>   
-            </div>
-            <div class="popularity-option">  
-                <h4>Choose name's popularity</h4>              
-                <span class="btn"
-                :class="options.popularity === Popularity.UNIQUE && 'option-active'"
-                >Unique</span>
-                <span class="btn"
-                :class="options.popularity === Popularity.TRENDY && 'option-active'"
-                >Trendy</span>
-            </div>
-            <div class="gender-option"> 
-                <h4>Choose name's length</h4>               
-                <span class="btn"
-                :class="options.length === Length.LONG && 'option-active'"
-                >Long</span>
-                <span class="btn"
-                :class="options.length === Length.ALL && 'option-active'"
-                >All</span>
-                <span class="btn"
-                :class="options.length === Length.SHORT && 'option-active'"
-                >Short</span>   
-            </div>
-                     
+        <div class="options-container text-center">
+            <BabyNameOption 
+            v-for="option in optionArray" 
+            :option=" option"
+            :options="options"
+            :key="option.title" />
+
             <div class="btn-find-names">
-                <button>Find Names</button>
+                <button @click="computeSelectedNames()">Find Names</button>
             </div>
-        </div>        
+        </div>
+        
+        <BabyNameCardName :names="selectedNames" @remove="removeName($event)"/>
     </div>
   
 </template>
@@ -86,26 +89,13 @@ const options= reactive<OptionState>({
     width: 90%;
     margin: 0 auto
 }
-.text-center,
-.options-container {
+.text-center {
     text-align: center;
 }
 .options-container {
     background-color: aqua;
     padding: 2em;
     border-radius: 1em;
-}
-span.btn {
-    padding: 0.4em 1em;
-    margin: 0 0.5em;
-    border-radius: 1em;
-    background-color: white;
-    /* border: 1px solid #000; */
-}
-
-span.btn.option-active {
-    background-color: #000 ;
-    color: #fff
 }
 .btn-find-names {
     margin-top: 3em;
@@ -118,4 +108,5 @@ span.btn.option-active {
     font-size: 18px;
     font-weight: 600;
 }
+
 </style>
