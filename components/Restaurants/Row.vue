@@ -2,7 +2,7 @@
 interface RowProps {
   rank?: number,
   name?: string,
-  index: number,
+  index?: number,
   isHeader?: boolean
 }
 
@@ -16,7 +16,7 @@ const props= defineProps<RowProps>()
   </div>
   <div v-else 
   class="row" 
-  :class="!(index % 2 === 0) ? 'bg-gray': null">
+  :class="index && !(index % 2 === 0) ? 'bg-gray': null">
     <h4 class="header rank">{{ rank }}</h4>
     <nuxt-link :to="`/restaurants/${name}`" class="header link">{{ name }}</nuxt-link>
   </div>
