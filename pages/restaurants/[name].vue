@@ -3,15 +3,21 @@
 import restaurants from "@/data/data.json";
 
 const route= useRoute()
-
 const { name }= route.params
 
 const restaurant = restaurants.find((r)=> r.name=== name)
+
+
+useSeoMeta({
+    title: name ? name : "404 - Restaurant Not Found"
+})
+
 </script>
 
 <template>
     <div class="restaurant-details">
-        <NuxtLayout v-if="restaurant" name="res">
+        
+        <NuxtLayout v-if="restaurant" name="res">            
             <div class="container" >
                 <div class="row">
                         <div class="col">
