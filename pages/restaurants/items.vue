@@ -1,12 +1,11 @@
-<script setup>
-definePageMeta({
-    layout: "restaurants",
-})
-</script>
+
 <template>
-  <div class="container">
-    <RestaurantsTable />
-  </div>
+  <NuxtLayout name="res">
+    <div class="container">
+      <RestaurantsTable />
+    </div>
+  </NuxtLayout>
+  
 </template>
 
 
